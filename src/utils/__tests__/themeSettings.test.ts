@@ -35,10 +35,10 @@ describe("normalizeThemeSettings", () => {
 
     const resolved = normalizeThemeSettings({
       enableHomepageMultiPing: true,
-      homepageMultiPingTaskIds: [3, 1, 3, 2, 4],
+      homepageMultiPingTaskIds: [3, 1, 3, 2, 4, 5, 6, 7],
     });
     expect(resolved.enableHomepageMultiPing).toBe(true);
-    expect(resolved.homepageMultiPingTaskIds).toEqual([3, 1, 2]);
+    expect(resolved.homepageMultiPingTaskIds).toEqual([3, 1, 2, 4, 5, 6]);
   });
 
   it("defaults home sort to weight ascending and falls back to a field's natural direction", () => {
