@@ -72,7 +72,7 @@ describe("homepage ping metric interval adaptation", () => {
     expect(buckets.filter((bucket) => bucket.total === 0)).toHaveLength(2);
   });
 
-  it("keeps 1.2.6 two-minute aggregates at the existing 24-bucket density", () => {
+  it("keeps two-minute aggregates at the existing 24-bucket density", () => {
     const buckets = buildPingBuckets(
       {
         metricIntervalMs: 2 * MINUTE_MS,
@@ -136,12 +136,12 @@ function pingOverviewResponse(taskId: number, value: number) {
 
 describe("homepage ping polling selection", () => {
   it("keeps large/compact and mini/list in their shared request modes", () => {
-    expect(resolveHomepagePingRequestMode("large", true, [1, 2, 3])).toBe("multi");
-    expect(resolveHomepagePingRequestMode("compact", true, [1, 2, 3])).toBe("multi");
-    expect(resolveHomepagePingRequestMode("mini", true, [1, 2, 3])).toBe("single");
-    expect(resolveHomepagePingRequestMode("list", true, [1, 2, 3])).toBe("single");
-    expect(resolveHomepagePingRequestMode("large", false, [1, 2, 3])).toBe("single");
-    expect(resolveHomepagePingRequestMode("large", true, [1, 2])).toBe("single");
+    expect(resolveHomepagePingRequestMode("large", true, [1, 2, 3, 4, 5, 6])).toBe("multi");
+    expect(resolveHomepagePingRequestMode("compact", true, [1, 2, 3, 4, 5, 6])).toBe("multi");
+    expect(resolveHomepagePingRequestMode("mini", true, [1, 2, 3, 4, 5, 6])).toBe("single");
+    expect(resolveHomepagePingRequestMode("list", true, [1, 2, 3, 4, 5, 6])).toBe("single");
+    expect(resolveHomepagePingRequestMode("large", false, [1, 2, 3, 4, 5, 6])).toBe("single");
+    expect(resolveHomepagePingRequestMode("large", true, [1, 2, 3])).toBe("single");
   });
 
   it("retains the previous line when one multi-ping task fails", async () => {
@@ -149,7 +149,7 @@ describe("homepage ping polling selection", () => {
       1,
       ["node-a"],
       {},
-      [1, 2, 3],
+      [1, 2, 3, 4, 5, 6],
       undefined,
       undefined,
       async (_hours, taskId) => pingOverviewResponse(taskId ?? 0, (taskId ?? 0) * 10),
@@ -159,7 +159,7 @@ describe("homepage ping polling selection", () => {
       1,
       ["node-a"],
       {},
-      [1, 2, 3],
+      [1, 2, 3, 4, 5, 6],
       undefined,
       first,
       async (_hours, taskId) => {
@@ -172,11 +172,17 @@ describe("homepage ping polling selection", () => {
       10,
       20,
       30,
+      40,
+      50,
+      60,
     ]);
     expect(second.multiLines.get("node-a")?.map((line) => line.lastValue)).toEqual([
       110,
       20,
       130,
+      140,
+      150,
+      160,
     ]);
     expect(second.multiLines.get("node-a")?.[1]?.taskName).toBe("Task 2");
   });
