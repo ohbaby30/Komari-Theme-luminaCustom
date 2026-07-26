@@ -1,4 +1,4 @@
-name: Build theme package manually
+name: Build and publish theme manually
 
 on:
   workflow_dispatch:
@@ -34,31 +34,51 @@ jobs:
       - name: Build package
         run: npm run package
 
-      - name: Upload package artifact
+      - name: Resolve release metadata
+        id: release
+        shell: bash
+        run: |
+          version="$(node -p "require('./komari-theme.json').version")"
+          tag="v${version}"
+          zip="Komari-Theme-luminaCustom-${tag}.zip"
+          test -f "$zip"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "zip=$zip" >> "$GITHUB_OUTPUT"
+
+      - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: Komari-Theme-luminaCustom-package
           path: |
-            Komari-Theme-luminaCustom-v*.zip
+            ${{ steps.release.outputs.zip }}
             preview.png
 
-      - name: Resolve release notes
-        if: startsWith(github.ref, 'refs/tags/')
-        id: release-notes
+      - name: Create or update GitHub Release
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          RELEASE_ZIP: ${{ steps.release.outputs.zip }}
         run: |
-          notes=".github/release-notes/${GITHUB_REF_NAME}.md"
-          if [[ ! -f "$notes" ]]; then
-            echo "::error::Missing release notes: $notes"
-            exit 1
-          fi
-          echo "path=$notes" >> "$GITHUB_OUTPUT"
+          notes=".github/release-notes/${RELEASE_TAG}.md"
 
-      - name: Publish GitHub release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            Komari-Theme-luminaCustom-v*.zip
-            preview.png
-          body_path: ${{ steps.release-notes.outputs.path }}
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" "$RELEASE_ZIP" --clobber
+            if [[ -f "$notes" ]]; then
+              gh release edit "$RELEASE_TAG" --title "$RELEASE_TAG" --notes-file "$notes" --latest
+            else
+              gh release edit "$RELEASE_TAG" --title "$RELEASE_TAG" --latest
+            fi
+          elif [[ -f "$notes" ]]; then
+            gh release create "$RELEASE_TAG" "$RELEASE_ZIP" \
+              --title "$RELEASE_TAG" \
+              --notes-file "$notes" \
+              --target "$GITHUB_SHA" \
+              --latest
+          else
+            gh release create "$RELEASE_TAG" "$RELEASE_ZIP" \
+              --title "$RELEASE_TAG" \
+              --generate-notes \
+              --target "$GITHUB_SHA" \
+              --latest
+          fi
