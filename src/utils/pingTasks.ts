@@ -1,5 +1,5 @@
 export type HomepagePingTaskBindings = Record<string, string[]>;
-export const HOMEPAGE_MULTI_PING_TASK_COUNT = 3;
+export const HOMEPAGE_MULTI_PING_TASK_COUNT = 6;
 
 function parseTaskId(taskId: string) {
   if (!/^\d+$/.test(taskId)) return null;
