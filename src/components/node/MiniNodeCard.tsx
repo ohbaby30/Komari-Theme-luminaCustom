@@ -14,7 +14,7 @@ import {
 import { clsx } from "clsx";
 import { Flag } from "@/components/ui/Flag";
 import { OsLogo } from "@/components/ui/OsLogo";
-import { IpStackBadges } from "./IpStackBadges";
+
 import { useNodeCardModel } from "@/hooks/useNodeCardModel";
 import { usePreferences } from "@/hooks/usePreferences";
 import { latencyHeatColor, lossHeatColor, speedRateColor } from "@/utils/metricTone";
@@ -53,15 +53,11 @@ function MiniHeader({ node, osName }: { node: MiniNode; osName: string }) {
 function MiniChips({
   tags,
   renewalPrice,
-  ipv4,
-  ipv6,
 }: {
   tags: MiniTag[];
   renewalPrice: string | null;
-  ipv4?: string | null;
-  ipv6?: string | null;
 }) {
-  if (!renewalPrice && tags.length === 0 && !ipv4 && !ipv6) return null;
+  if (!renewalPrice && tags.length === 0) return null;
   const tagTitle = joinTagTitle(tags);
   return (
     <div className="mini-node-chip-row">
@@ -71,7 +67,7 @@ function MiniChips({
           {renewalPrice}
         </span>
       )}
-      <IpStackBadges ipv4={ipv4} ipv6={ipv6} />
+
       {tags.length > 0 && (
         <div className="mini-node-tag-lane" title={tagTitle}>
           {tags.map((tag, index) => (
@@ -392,7 +388,7 @@ export const MiniNodeCard = memo(function MiniNodeCard({ uuid }: { uuid: string 
       data-appearance={resolvedAppearance}
     >
       <MiniHeader node={node} osName={osName} />
-      <MiniChips tags={footerTags} renewalPrice={renewalPrice} ipv4={node.ipv4} ipv6={node.ipv6} />
+      <MiniChips tags={footerTags} renewalPrice={renewalPrice} />
       <MiniVitals node={node} loadFraction={loadFraction} />
       <MiniFlow node={node} upRate={upRate} downRate={downRate} />
       <MiniHealth
