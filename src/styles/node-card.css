@@ -142,22 +142,6 @@
   gap: 6px;
 }
 
-/* V4/V6 双栈标识药丸：仅字样（不显示真实 IP）。data-tag="green" 复用绿色标签的 token，与标签统一 */
-.ip-stack-badge {
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  height: 22px;
-  padding: 0 0.5rem;
-  border-radius: 8px;
-  border: 1px solid color-mix(in srgb, var(--tag-fg) 14%, transparent);
-  background: var(--tag-bg);
-  color: var(--tag-fg);
-  font-size: 10.5px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.02em;
-}
 
 .server-card-stack {
   display: flex;
@@ -425,7 +409,7 @@
   gap: 22px;
 }
 
-/* 三网模式沿用单线路“延迟 / 丢包”双图语义：左右按指标分组、每列三行线路，
+/* 多线路模式沿用单线路“延迟 / 丢包”双图语义：左右按指标分组、每列多行线路，
    分桶颜色表达真实延迟与丢包状态。 */
 .multi-ping-status {
   min-width: 0;
