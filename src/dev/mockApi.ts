@@ -345,6 +345,9 @@ const pingTasks = [
   { id: 1, name: "中国电信", target: "电信探针" },
   { id: 2, name: "中国联通", target: "联通探针" },
   { id: 3, name: "中国移动", target: "移动探针" },
+  { id: 4, name: "Cloudflare", target: "1.1.1.1" },
+  { id: 5, name: "Google DNS", target: "8.8.8.8" },
+  { id: 6, name: "阿里 DNS", target: "223.5.5.5" },
 ].map((task, index) => ({
   ...task,
   interval: 60,
@@ -389,7 +392,7 @@ export function installDevMockApi() {
       return json({
         sitename: "Lumina Ops",
         description: "全球节点运行状态",
-        theme: "komari-theme-luminaPlus",
+        theme: "komari-theme-luminacustom",
         allow_cors: false,
         disable_password_login: false,
         oauth_enable: false,
@@ -415,11 +418,11 @@ export function installDevMockApi() {
           showBandwidthRating: true,
           showAssetRating: true,
           showPingChart: true,
-          // 单任务刻意和三网首项不同，便于回归验证列表没有误读全局三网数据。
+          // 单任务刻意和多线路首项不同，便于回归验证列表没有误读全局多线路数据。
           homepagePingBindings: { "2": nodes.map((node) => node.uuid) },
           enableHomepageMultiPing:
             new URLSearchParams(window.location.search).get("multiPing") === "1",
-          homepageMultiPingTaskIds: [1, 2, 3],
+          homepageMultiPingTaskIds: [1, 2, 3, 4, 5, 6],
         },
       });
     }
