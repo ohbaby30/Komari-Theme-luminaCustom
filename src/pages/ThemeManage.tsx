@@ -841,19 +841,19 @@ export function ThemeManage() {
             <span className="theme-masthead-kicker">LUMINAPLUS · 主题控制台</span>
             <h1 className="theme-masthead-title">主题设置</h1>
             <p className="theme-masthead-desc">
-              集中调整 LuminaPlus 的展示偏好与首页延迟绑定；保存后立即应用到当前站点。
+              集中调整 luminaCustom 的展示偏好与首页延迟绑定；保存后立即应用到当前站点。
             </p>
           </div>
           <dl className="theme-masthead-meta">
             <div>
               <dt>主题</dt>
-              <dd>{config?.theme || "Komari-Theme-LuminaPlus"}</dd>
+              <dd>{config?.theme || "Komari-Theme-luminaCustom"}</dd>
             </div>
             <div>
               <dt>已绑定 Ping</dt>
               <dd>
                 {draft.enableHomepageMultiPing
-                  ? `三网 ${draft.homepageMultiPingTaskIds.length} / 3`
+                  ? `多线路 ${draft.homepageMultiPingTaskIds.length} / ${HOMEPAGE_MULTI_PING_TASK_COUNT}`
                   : `${assignedNodeCount} / ${sortedClients.length}`}
               </dd>
             </div>
@@ -1654,7 +1654,7 @@ export function ThemeManage() {
         title="主页延迟检测"
         description={
           <>
-            单线路模式为每个节点绑定一项 Ping 任务；开启三网模式后，大卡片和小卡片统一展示指定的三项任务，迷你卡片与列表仍显示节点的单线路绑定。
+            单线路模式为每个节点绑定一项 Ping 任务；开启多线路模式后，大卡片和小卡片统一展示指定的六项任务，迷你卡片与列表仍显示节点的单线路绑定。
             {" "}
             如果当前还没有可用任务，请先前往
             {" "}
@@ -1670,7 +1670,7 @@ export function ThemeManage() {
             {tasksLoading || clientsLoading
               ? "载入中"
               : draft.enableHomepageMultiPing
-                ? `三网 ${draft.homepageMultiPingTaskIds.length} / 3`
+                ? `多线路 ${draft.homepageMultiPingTaskIds.length} / ${HOMEPAGE_MULTI_PING_TASK_COUNT}`
                 : `${sortedTasks.length} 个任务`}
           </div>
         }
@@ -1686,10 +1686,10 @@ export function ThemeManage() {
             <label className="flex items-start justify-between gap-4">
               <span className="min-w-0">
                 <span className="block text-[13px] font-medium text-[var(--text-primary)]">
-                  开启三网模式
+                  开启多线路模式
                 </span>
                 <span className="mt-1 block text-[11px] leading-relaxed text-[var(--text-tertiary)]">
-                  默认关闭。开启后大卡片和小卡片统一显示下面三项 Ping
+                  默认关闭。开启后大卡片和小卡片统一显示下面六项 Ping
                   任务；迷你卡片与列表继续使用原有单线路绑定。
                 </span>
               </span>
@@ -1726,7 +1726,7 @@ export function ThemeManage() {
                             onChange={(event) =>
                               patchMultiPingTask(slot, event.target.value)
                             }
-                            aria-label={`三网线路 ${slot + 1}`}
+                            aria-label={`多线路 ${slot + 1}`}
                             className="surface-inset w-full px-3 py-2 text-[13px] text-[var(--text-primary)] outline-none"
                           >
                             <option value="">选择 Ping 任务</option>
@@ -1764,8 +1764,8 @@ export function ThemeManage() {
                   role={draftMultiPingInvalid ? "alert" : undefined}
                 >
                   {draftMultiPingInvalid
-                    ? "请选满 3 个不同的 Ping 任务后再保存。"
-                    : "三项任务按这里的顺序显示；某项任务没有节点样本时保留该行并显示“无样本”。"}
+                    ? `请选满 ${HOMEPAGE_MULTI_PING_TASK_COUNT} 个不同的 Ping 任务后再保存。`
+                    : "六项任务按这里的顺序显示；某项任务没有节点样本时保留该行并显示“无样本”。"}
                 </p>
               </div>
             )}
@@ -1786,7 +1786,7 @@ export function ThemeManage() {
               <span>首页绑定总数</span>
               <strong className="text-[var(--text-primary)]">
                 {draft.enableHomepageMultiPing
-                  ? `${draft.homepageMultiPingTaskIds.length} / 3 条线路`
+                  ? `${draft.homepageMultiPingTaskIds.length} / ${HOMEPAGE_MULTI_PING_TASK_COUNT} 条线路`
                   : `${assignedNodeCount} / ${sortedClients.length}`}
               </strong>
             </div>
@@ -1794,7 +1794,7 @@ export function ThemeManage() {
 
           {draft.enableHomepageMultiPing && (
             <div className="text-[11px] text-[var(--text-tertiary)]">
-              下方单线路绑定继续用于迷你卡片和列表；大卡片与小卡片使用上方三项任务。
+              下方单线路绑定继续用于迷你卡片和列表；大卡片与小卡片使用上方六项任务。
             </div>
           )}
 
@@ -1805,7 +1805,7 @@ export function ThemeManage() {
               </span>
               <span className="mt-1 block text-[11px] text-[var(--text-tertiary)]">
                 未绑定单线路 Ping 任务的在线节点显示前端生成的模拟数据（延迟 1-10ms、丢包
-                0%）。开启三网模式时仍用于迷你卡片和列表，大卡片与小卡片显示真实三网数据；
+                0%）。开启多线路模式时仍用于迷你卡片和列表，大卡片与小卡片显示真实多线路数据；
                 模拟数据仅用于视觉统一，不代表真实网络质量。
               </span>
             </span>
