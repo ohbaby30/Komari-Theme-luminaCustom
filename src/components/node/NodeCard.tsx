@@ -37,7 +37,7 @@ import {
   pingEmptyLabels,
   TRAFFIC_SLIVER_RATIO,
 } from "./nodeCardShared";
-import { IpStackBadges } from "./IpStackBadges";
+import { HOMEPAGE_MULTI_PING_TASK_COUNT } from "@/utils/pingTasks";
 import { HealthBucketTooltip } from "./HealthBucketTooltip";
 import { MultiPingStatus } from "./MultiPingStatus";
 import { formatHealthBucketTooltip } from "./pingBucketText";
@@ -153,7 +153,7 @@ export const NodeCard = memo(function NodeCard({
             </div>
           )}
 
-          {homepagePingLines.length === 3 ? (
+          {homepagePingLines.length === HOMEPAGE_MULTI_PING_TASK_COUNT ? (
             <MultiPingStatus
               lines={homepagePingLines}
               density="large"
@@ -210,14 +210,11 @@ function NodeCardHeader({
             {node.name}
           </Link>
         </div>
-        {(subtitle || node.ipv4 || node.ipv6) && (
+        {subtitle && (
           <div className="server-card-subtitle-row">
-            {subtitle && (
-              <span className="server-card-subtitle" title={subtitle}>
-                {subtitle}
-              </span>
-            )}
-            <IpStackBadges ipv4={node.ipv4} ipv6={node.ipv6} />
+            <span className="server-card-subtitle" title={subtitle}>
+              {subtitle}
+            </span>
           </div>
         )}
       </div>
