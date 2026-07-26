@@ -45,10 +45,16 @@ function runTypecheck() {
   }
 }
 
+function normalizeReleaseVersion(value) {
+  const parts = String(value).split(".");
+  if (parts.length > 3 || parts.some((part) => !/^\d+$/.test(part))) return String(value);
+  return [...parts, "0", "0"].slice(0, 3).join(".");
+}
+
 function assertVersionsAligned() {
   const pkg = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
   const manifest = JSON.parse(readFileSync(resolve(root, "komari-theme.json"), "utf8"));
-  if (pkg.version !== manifest.version) {
+  if (normalizeReleaseVersion(pkg.version) !== normalizeReleaseVersion(manifest.version)) {
     throw new Error(
       `Version mismatch: package.json is ${pkg.version} but komari-theme.json is ${manifest.version}. ` +
         "Align them before releasing — the packaged zip is named from komari-theme.json.",
