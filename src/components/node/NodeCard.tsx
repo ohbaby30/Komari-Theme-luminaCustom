@@ -37,7 +37,6 @@ import {
   pingEmptyLabels,
   TRAFFIC_SLIVER_RATIO,
 } from "./nodeCardShared";
-import { HOMEPAGE_MULTI_PING_TASK_COUNT } from "@/utils/pingTasks";
 import { HealthBucketTooltip } from "./HealthBucketTooltip";
 import { MultiPingStatus } from "./MultiPingStatus";
 import { formatHealthBucketTooltip } from "./pingBucketText";
@@ -153,7 +152,7 @@ export const NodeCard = memo(function NodeCard({
             </div>
           )}
 
-          {homepagePingLines.length === HOMEPAGE_MULTI_PING_TASK_COUNT ? (
+          {homepagePingLines.length > 0 ? (
             <MultiPingStatus
               lines={homepagePingLines}
               density="large"

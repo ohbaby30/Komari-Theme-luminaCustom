@@ -141,7 +141,12 @@ describe("homepage ping polling selection", () => {
     expect(resolveHomepagePingRequestMode("mini", true, [1, 2, 3, 4, 5, 6])).toBe("single");
     expect(resolveHomepagePingRequestMode("list", true, [1, 2, 3, 4, 5, 6])).toBe("single");
     expect(resolveHomepagePingRequestMode("large", false, [1, 2, 3, 4, 5, 6])).toBe("single");
-    expect(resolveHomepagePingRequestMode("large", true, [1, 2, 3])).toBe("single");
+    for (let count = 1; count <= 6; count += 1) {
+      const taskIds = Array.from({ length: count }, (_, index) => index + 1);
+      expect(resolveHomepagePingRequestMode("large", true, taskIds)).toBe("multi");
+      expect(resolveHomepagePingRequestMode("compact", true, taskIds)).toBe("multi");
+    }
+    expect(resolveHomepagePingRequestMode("large", true, [])).toBe("single");
   });
 
   it("retains the previous line when one multi-ping task fails", async () => {
