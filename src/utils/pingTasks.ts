@@ -25,6 +25,11 @@ export function normalizeHomepageMultiPingTaskIds(value: unknown): number[] {
   return normalized;
 }
 
+/** 多线路模式允许选择 1-6 项；空选择不能启用。 */
+export function hasHomepageMultiPingTasks(value: unknown): boolean {
+  return normalizeHomepageMultiPingTaskIds(value).length > 0;
+}
+
 export function normalizeHomepagePingTaskBindings(
   value: unknown,
 ): HomepagePingTaskBindings {
@@ -86,7 +91,7 @@ export function resolveHomepagePingTaskIdsByClient(
   const selectedTaskIds = normalizeHomepageMultiPingTaskIds(multiTaskIds);
   const selectedTaskIdsByClient = new Map<string, number[]>();
 
-  if (selectedTaskIds.length === HOMEPAGE_MULTI_PING_TASK_COUNT) {
+  if (selectedTaskIds.length > 0) {
     for (const uuid of clientUuids) {
       if (uuid) selectedTaskIdsByClient.set(uuid, selectedTaskIds);
     }
@@ -108,8 +113,7 @@ export function resolveHomepagePingSelections(
 ) {
   const normalizedMultiTaskIds =
     normalizeHomepageMultiPingTaskIds(multiTaskIds);
-  const useMultiPing =
-    normalizedMultiTaskIds.length === HOMEPAGE_MULTI_PING_TASK_COUNT;
+  const useMultiPing = normalizedMultiTaskIds.length > 0;
   const singleTaskIdsByClient = useMultiPing
     ? new Map<string, number[]>()
     : resolveHomepagePingTaskIdsByClient(clientUuids, bindings);

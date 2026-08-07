@@ -14,7 +14,7 @@ import { withTimeoutSignal } from "@/utils/abort";
 import { collectMatchingNodeUuids } from "@/utils/nodeIdentity";
 import { resolvePingSampleCounts } from "@/utils/pingMetrics";
 import {
-  HOMEPAGE_MULTI_PING_TASK_COUNT,
+  hasHomepageMultiPingTasks,
   resolveHomepagePingSelections,
   type HomepagePingTaskBindings,
 } from "@/utils/pingTasks";
@@ -49,7 +49,7 @@ export function resolveHomepagePingRequestMode(
 ): HomepagePingRequestMode {
   return (viewMode === "large" || viewMode === "compact") &&
     multiPingEnabled &&
-    multiTaskIds.length === HOMEPAGE_MULTI_PING_TASK_COUNT
+    hasHomepageMultiPingTasks(multiTaskIds)
     ? "multi"
     : "single";
 }

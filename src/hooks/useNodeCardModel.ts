@@ -27,7 +27,7 @@ import {
 } from "@/utils/metricTone";
 import { resolveTrafficUsage, trafficTypeLabel, type TrafficDisplay } from "@/utils/traffic";
 import { resolveOsInfo } from "@/components/ui/OsLogo";
-import { HOMEPAGE_MULTI_PING_TASK_COUNT } from "@/utils/pingTasks";
+import { hasHomepageMultiPingTasks } from "@/utils/pingTasks";
 
 interface NodeCardModelOptions {
   pingBucketCount?: number;
@@ -52,7 +52,7 @@ export function useNodeCardModel(
   const multiPingActive =
     includeMultiPing &&
     enableHomepageMultiPing &&
-    homepageMultiPingTaskIds.length === HOMEPAGE_MULTI_PING_TASK_COUNT;
+    hasHomepageMultiPingTasks(homepageMultiPingTaskIds);
   const realPing = useNodePingOverview(uuid, !multiPingActive);
   const realPingLines = useNodePingOverviewLines(uuid, multiPingActive);
   const now = useHourlyClock();

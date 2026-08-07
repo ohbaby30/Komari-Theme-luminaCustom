@@ -38,7 +38,6 @@ import {
   pingEmptyLabels,
   TRAFFIC_SLIVER_RATIO,
 } from "./nodeCardShared";
-import { HOMEPAGE_MULTI_PING_TASK_COUNT } from "@/utils/pingTasks";
 import type {
   NodeInfo,
   NodeMetrics,
@@ -713,7 +712,7 @@ export const CompactNodeCard = memo(function CompactNodeCard({
         renewalPrice={renewalPrice}
       />
       <CompactTrafficBar traffic={traffic} uptimeLabel={uptimeLabel} />
-      {homepagePingLines.length === HOMEPAGE_MULTI_PING_TASK_COUNT ? (
+      {homepagePingLines.length > 0 ? (
         <MultiPingStatus
           lines={homepagePingLines}
           density="compact"

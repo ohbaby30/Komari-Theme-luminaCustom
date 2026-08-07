@@ -630,7 +630,7 @@ export function ThemeManage() {
     draft.costRateApiUrl.trim() !== "" && !isCostRateApiUrlValid(draft.costRateApiUrl.trim());
   const draftMultiPingInvalid =
     draft.enableHomepageMultiPing &&
-    draft.homepageMultiPingTaskIds.length !== HOMEPAGE_MULTI_PING_TASK_COUNT;
+    draft.homepageMultiPingTaskIds.length === 0;
 
   // 由当前草稿拼出的设置 payload,保存请求和 dirty 判断都用它。草稿字段与设置同名,这里只做
   // 「编辑态 → 存储态」的换形与归一化;文本域(hiddenNodesText/costIgnoredText)和 ratingLabels
@@ -1654,7 +1654,7 @@ export function ThemeManage() {
         title="主页延迟检测"
         description={
           <>
-            单线路模式为每个节点绑定一项 Ping 任务；开启多线路模式后，大卡片和小卡片统一展示指定的六项任务，迷你卡片与列表仍显示节点的单线路绑定。
+            单线路模式为每个节点绑定一项 Ping 任务；开启多线路模式后，大卡片和小卡片统一展示指定的最多六项任务，迷你卡片与列表仍显示节点的单线路绑定。
             {" "}
             如果当前还没有可用任务，请先前往
             {" "}
@@ -1689,7 +1689,7 @@ export function ThemeManage() {
                   开启多线路模式
                 </span>
                 <span className="mt-1 block text-[11px] leading-relaxed text-[var(--text-tertiary)]">
-                  默认关闭。开启后大卡片和小卡片统一显示下面六项 Ping
+                  默认关闭。开启后大卡片和小卡片统一显示下面选中的 1-6 项 Ping
                   任务；迷你卡片与列表继续使用原有单线路绑定。
                 </span>
               </span>
@@ -1699,7 +1699,7 @@ export function ThemeManage() {
                 disabled={
                   !draft.enableHomepageMultiPing &&
                   !tasksLoading &&
-                  sortedTasks.length < HOMEPAGE_MULTI_PING_TASK_COUNT
+                  sortedTasks.length < 1
                 }
                 onChange={(event) =>
                   patch("enableHomepageMultiPing", event.target.checked)
@@ -1764,8 +1764,8 @@ export function ThemeManage() {
                   role={draftMultiPingInvalid ? "alert" : undefined}
                 >
                   {draftMultiPingInvalid
-                    ? `请选满 ${HOMEPAGE_MULTI_PING_TASK_COUNT} 个不同的 Ping 任务后再保存。`
-                    : "六项任务按这里的顺序显示；某项任务没有节点样本时保留该行并显示“无样本”。"}
+                    ? "请至少选择 1 个 Ping 任务后再保存。"
+                    : "已选任务按这里的顺序显示（最多六项）；某项任务没有节点样本时保留该行并显示“无样本”。"}
                 </p>
               </div>
             )}
@@ -1794,7 +1794,7 @@ export function ThemeManage() {
 
           {draft.enableHomepageMultiPing && (
             <div className="text-[11px] text-[var(--text-tertiary)]">
-              下方单线路绑定继续用于迷你卡片和列表；大卡片与小卡片使用上方六项任务。
+              下方单线路绑定继续用于迷你卡片和列表；大卡片与小卡片使用上方已选任务。
             </div>
           )}
 

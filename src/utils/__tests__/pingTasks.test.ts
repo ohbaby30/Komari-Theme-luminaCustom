@@ -47,7 +47,7 @@ describe("homepage ping task bindings", () => {
     expect(normalizeHomepageMultiPingTaskIds(["3", 1, 3, 2, 4, 5, 6, 7])).toEqual([3, 1, 2, 4, 5, 6]);
   });
 
-  it("uses the same six global tasks for every node and otherwise keeps single bindings", () => {
+  it("uses the same 1-6 global tasks for every node and otherwise keeps single bindings", () => {
     const bindings = { "8": ["node-a"], "9": ["node-b"] };
     expect(
       resolveHomepagePingTaskIdsByClient(["node-a", "node-b"], bindings, [3, 1, 2, 4, 5, 6]),
@@ -61,6 +61,12 @@ describe("homepage ping task bindings", () => {
       new Map([
         ["node-a", [8]],
         ["node-b", [9]],
+      ]),
+    );
+    expect(resolveHomepagePingTaskIdsByClient(["node-a", "node-b"], bindings, [3, 1])).toEqual(
+      new Map([
+        ["node-a", [3, 1]],
+        ["node-b", [3, 1]],
       ]),
     );
   });
@@ -81,6 +87,19 @@ describe("homepage ping task bindings", () => {
     );
     expect(multiSelections.requestedTaskIdsByClient).toBe(
       multiSelections.multiTaskIdsByClient,
+    );
+
+    const partialMultiSelections = resolveHomepagePingSelections(
+      ["node-a", "node-b"],
+      { "8": ["node-a"], "9": ["node-b"] },
+      [3, 1],
+    );
+    expect(partialMultiSelections.singleTaskIdsByClient).toEqual(new Map());
+    expect(partialMultiSelections.multiTaskIdsByClient).toEqual(
+      new Map([
+        ["node-a", [3, 1]],
+        ["node-b", [3, 1]],
+      ]),
     );
 
     const singleSelections = resolveHomepagePingSelections(
