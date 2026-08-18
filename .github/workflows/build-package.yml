@@ -39,21 +39,38 @@ jobs:
         shell: bash
         run: |
           version="$(node -p "require('./komari-theme.json').version")"
-          tag="v${version}"
+          branch="${GITHUB_REF_NAME:-main}"
+
+          # test 分支追加 -test 后缀，标记为测试版
+          if [[ "$branch" == "test" ]]; then
+            tag="v${version}-test"
+          else
+            tag="v${version}"
+          fi
+
           zip="Komari-Theme-luminaCustom-${tag}.zip"
+          # 构建产物的实际文件名用的是 komari-theme.json 里的 version（无 -test），
+          # 需要重命名以匹配 tag。
+          original_zip="Komari-Theme-luminaCustom-v${version}.zip"
+          if [[ -f "$original_zip" && "$original_zip" != "$zip" ]]; then
+            mv "$original_zip" "$zip"
+          fi
           test -f "$zip"
+
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "zip=$zip" >> "$GITHUB_OUTPUT"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Komari-Theme-luminaCustom-package
+          name: Komari-Theme-luminaCustom-${{ steps.release.outputs.tag }}
           path: |
             ${{ steps.release.outputs.zip }}
             preview.png
 
       - name: Create or update GitHub Release
+        if: steps.release.outputs.branch != 'test'
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
