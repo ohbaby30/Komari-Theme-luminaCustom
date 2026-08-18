@@ -1,5 +1,6 @@
 import type { NodeInfo, NodeMetrics, NodeRealtime, TrafficTrendSample } from "@/types/komari";
 import { getNodes, getNodesLatestStatus } from "@/services/api";
+import { toTimestamp } from "@/utils/timestamp";
 
 type Listener = () => void;
 type RealtimePayload = Record<string, unknown>;
@@ -494,19 +495,6 @@ function resolveOnline(rawRecord: unknown): boolean {
   if (typeof rawRecord === "boolean") return rawRecord;
   const record = asRecord(rawRecord);
   return asBoolean(record.online, Object.keys(record).length > 0);
-}
-
-function toTimestamp(value: string | number | undefined): number {
-  if (typeof value === "number") {
-    return value > 1_000_000_000_000 ? value : value * 1000;
-  }
-  if (!value) return 0;
-  const numeric = Number(value);
-  if (Number.isFinite(numeric) && numeric > 0) {
-    return numeric > 1_000_000_000_000 ? numeric : numeric * 1000;
-  }
-  const parsed = Date.parse(value);
-  return Number.isNaN(parsed) ? 0 : parsed;
 }
 
 // 旧扁平协议的 connections 是 TCP+UDP 合计。

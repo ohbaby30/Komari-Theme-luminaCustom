@@ -1,4 +1,4 @@
-import { memo, useRef, useState } from "react";
+import { memo, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -129,38 +129,43 @@ function CompactTrafficPulse({
   up: TrafficTrendSample[];
   down: TrafficTrendSample[];
 }) {
-  const upSelected = up.slice(-TRAFFIC_DOT_COUNT);
-  const downSelected = down.slice(-TRAFFIC_DOT_COUNT);
-  const upPadding = Math.max(0, TRAFFIC_DOT_COUNT - upSelected.length);
-  const downPadding = Math.max(0, TRAFFIC_DOT_COUNT - downSelected.length);
+  const dots = useMemo(() => {
+    const upSelected = up.slice(-TRAFFIC_DOT_COUNT);
+    const downSelected = down.slice(-TRAFFIC_DOT_COUNT);
+    const upPadding = Math.max(0, TRAFFIC_DOT_COUNT - upSelected.length);
+    const downPadding = Math.max(0, TRAFFIC_DOT_COUNT - downSelected.length);
+
+    return Array.from({ length: TRAFFIC_DOT_COUNT }, (_, index) => {
+      const upSample = index < upPadding ? null : upSelected[index - upPadding];
+      const downSample = index < downPadding ? null : downSelected[index - downPadding];
+      const upValue = upSample?.value ?? 0;
+      const downValue = downSample?.value ?? 0;
+      const active = upValue > 0 || downValue > 0;
+      const level = Math.max(upSample?.level ?? 0, downSample?.level ?? 0);
+      return {
+        active,
+        color: active
+          ? speedRateColorFromBytes(Math.max(upValue, downValue))
+          : "var(--progress-bg)",
+        scale: active ? `${0.68 + level * 0.62}` : "0.48",
+        opacity: active ? 0.5 + level * 0.42 : 0.38,
+      };
+    });
+  }, [up, down]);
 
   return (
     <span className="compact-node-traffic-pulse" aria-hidden>
-      {Array.from({ length: TRAFFIC_DOT_COUNT }, (_, index) => {
-        const upSample = index < upPadding ? null : upSelected[index - upPadding];
-        const downSample = index < downPadding ? null : downSelected[index - downPadding];
-        const upValue = upSample?.value ?? 0;
-        const downValue = downSample?.value ?? 0;
-        const active = upValue > 0 || downValue > 0;
-        const level = Math.max(upSample?.level ?? 0, downSample?.level ?? 0);
-        // 每点按其主方向(上/下取大)速率的单位档上色,与大卡的速度档色一致;大小/透明度仍按 level。
-        // 仅活跃点计算颜色,空闲点直接用中性色,省掉无谓的 formatByteRate。
-        const style = {
-          "--compact-traffic-dot-color": active
-            ? speedRateColorFromBytes(Math.max(upValue, downValue))
-            : "var(--progress-bg)",
-          "--compact-traffic-dot-scale": active ? `${0.68 + level * 0.62}` : "0.48",
-          opacity: active ? 0.5 + level * 0.42 : 0.38,
-        } as CSSProperties;
-
-        return (
-          <span
-            key={index}
-            data-active={active ? "true" : "false"}
-            style={style}
-          />
-        );
-      })}
+      {dots.map((dot, index) => (
+        <span
+          key={index}
+          data-active={dot.active ? "true" : "false"}
+          style={{
+            "--compact-traffic-dot-color": dot.color,
+            "--compact-traffic-dot-scale": dot.scale,
+            opacity: dot.opacity,
+          } as CSSProperties}
+        />
+      ))}
     </span>
   );
 }

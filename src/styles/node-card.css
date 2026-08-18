@@ -413,6 +413,11 @@
    分桶颜色表达真实延迟与丢包状态。 */
 .multi-ping-status {
   min-width: 0;
+  /* 6 条线路 × 2 行（延迟+丢包）可能导致卡片高度膨胀；限制最大高度，超出时滚动。 */
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
 }
 
 .multi-ping-columns {

@@ -270,7 +270,7 @@ function MiniHealthBars({
         const barHeight =
           kind === "latency"
             ? 16 * (hasLatency ? Math.max(0.2, Math.min(1, latency / safeMax)) : 0.25)
-            : 16 * 0.84;
+            : 16 * (hasLoss ? Math.max(0.2, Math.min(1, 1 - Math.min(loss, 100) / 100)) : 0.25);
         const tone =
           kind === "latency"
             ? hasLatency

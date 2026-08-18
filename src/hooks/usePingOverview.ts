@@ -12,6 +12,7 @@ import type {
 } from "@/types/komari";
 import { withTimeoutSignal } from "@/utils/abort";
 import { collectMatchingNodeUuids } from "@/utils/nodeIdentity";
+import { toTimestamp } from "@/utils/timestamp";
 import { resolvePingSampleCounts } from "@/utils/pingMetrics";
 import {
   hasHomepageMultiPingTasks,
@@ -62,14 +63,6 @@ interface PingOverviewMapResult {
 }
 
 type Listener = () => void;
-
-function toTimestamp(value: string | number) {
-  if (typeof value === "number") {
-    return value > 1_000_000_000_000 ? value : value * 1000;
-  }
-  const parsed = Date.parse(String(value));
-  return Number.isNaN(parsed) ? 0 : parsed;
-}
 
 function normalizeRefreshInterval(seconds: number | null | undefined) {
   if (!Number.isFinite(seconds) || !seconds || seconds <= 0) {

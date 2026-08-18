@@ -204,7 +204,7 @@ function NodeCardHeader({
           <Link
             to={`/instance/${encodeURIComponent(node.uuid)}`}
             className="server-card-title-link"
-            title={node.name}
+            title={`${node.name} · ${osName}`}
           >
             {node.name}
           </Link>
